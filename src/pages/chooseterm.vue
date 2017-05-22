@@ -8,7 +8,8 @@
 		</mt-cell>
 		<div @click="chooseTerm">
 			<mt-cell title="分期期数" is-link>
-			  <span>{{chooseNum}}</span>
+			  <span v-if="chooseNum">{{chooseNum}}</span>
+			  <span v-else>选择分期期数</span>
 			  <img slot="icon" src="../assets/img/fen.png" width="20" height="20">
 			</mt-cell>
 		</div>
@@ -61,13 +62,14 @@
 
 <script>
 import { getPartList } from '../api'
+import Validate from '../assets/js/WxValidate'
 export default {
 	data () {
 		return {
 	    amount: '',
 			lowestAmount: '',
 			largestAmount: '',
-			chooseNum: '选择分期期数',
+			chooseNum: '',
 	    eachAmount: '',
 	    totalAmount: '',
 	    shopMechanism: {},
@@ -77,23 +79,15 @@ export default {
 	},
 	methods: {
 		chooseTerm () {
-			let largestAmount = this.shopMechanism.amount
-			let lowestAmount = this.shopMechanism.lowestAmount
-			if (this.amount.length === 0) {
-				this.$toast({
-					message: '请输入金额'
-				})
-			} else if (!(/^(?:-?\d+|-?\d{1,3}(?:,\d{3})+)?(?:\.\d+)?$/.test(this.amount))) {
-				this.$toast({
-					message: '输入不合法'
-				})
-			} else if (this.amount < lowestAmount || this.amount > largestAmount) {
-				this.$toast({
-					message: '输入金额超出范围'
-				})
-			} else {
-				this.getTermList()
+			let form = {
+				amount: this.amount
 			}
+			if (!this.validate.checkForm(form)) {
+	      const error = this.validate.errorList[0]
+	      this.showToast(error.msg)
+	      return false
+	    }
+	    this.getTermList()
 		},
 		getTermList () {
 			let data = {
@@ -131,7 +125,41 @@ export default {
 			this.eachAmount = ((Math.floor(this.amount / parseInt(e.name) * 100)) / 100).toFixed(2);
 			this.totalAmount = (this.amount * 1).toFixed(2);
 		},
+		showToast (msg) {
+			this.$toast({
+			  message: msg,
+			  duration: 1000
+			})
+		},
+		initValidate() {
+			let self = this
+	    this.validate = new Validate({
+	      amount: {
+	        required: true,
+	        number: true,
+	        range: [self.shopMechanism.lowestAmount, self.shopMechanism.amount]
+	      },
+	    }, {
+	      amount: {
+	        required: '请输入金额',
+	        number: '输入不合法',
+	        range: '输入金额范围有误'
+	      }
+	    })
+    },
 		onSubmit () {
+			let form = {
+				amount: this.amount
+			}
+			if (!this.validate.checkForm(form)) {
+	      const error = this.validate.errorList[0]
+	      this.showToast(error.msg)
+	      return false
+	    }
+	    if (this.chooseNum === '') {
+	    	this.showToast('请选择期数')
+	    	return false
+	    }
 			if (parseInt(this.totalAmount) == parseInt(this.amount)) {
 				sessionStorage.setItem('amount', this.totalAmount)
 				sessionStorage.setItem('parts', this.chooseNum)
@@ -140,7 +168,6 @@ export default {
 				this.$toast({
 					message:'请重新选择期数'
 				})
-				// this.sheetVisible = true;
 			}
 		}
 	},
@@ -151,6 +178,7 @@ export default {
 	},
 	mounted () {
 		this.shopMechanism = JSON.parse(sessionStorage.getItem('shopMechanism'))
+		this.initValidate()
 	}
 }
 </script>
@@ -205,6 +233,7 @@ input{
 .explain {
 	display: flex;
 	justify-content: space-between;
+	height: 50px;
 	padding: 0 15px
 }
 .explain-item {

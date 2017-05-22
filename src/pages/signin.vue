@@ -83,7 +83,7 @@ export default {
 					console.log(result.customerSessionId)
 					console.log(result.customerUser)
 					sessionStorage.setItem('sessionId', result.customerSessionId)
-					sessionStorage.setItem('user', result.customerUser)
+					sessionStorage.setItem('user', JSON.stringify(result.customerUser))
 					this.$router.push({ path: '/index' })
 				} else {
 					self.showToast(res.data.message)

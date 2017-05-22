@@ -4,16 +4,16 @@ axios.defaults.baseURL = '/baseUrl'
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded'
 axios.defaults.transformRequest = [(data) => { return Qs.stringify(data) }]
 axios.defaults.timeout = 5000
-
-var instance = axios.create({
+const instance = axios.create({
   baseURL: '/decodeUrl',
   timeout: 5000,
   headers: {'Content-Type': 'multipart/form-data'},
-  proxy: {
-    host: '127.0.0.1',
-    port: 3000,
-  },
-});
+  // headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+  transformRequest: [function (data) {
+    console.log(data)
+    return data
+  }]
+})
 export const requestLogin = data => { return axios.post('/user/loginByMobileAndPassword.json', data) }
 
 export const getRandomImage = () => { return axios.get('/user/getRandomImage.json') }
@@ -28,7 +28,7 @@ export const loginBySmsCode = data => { return axios.post('/user/loginByMobileAn
 
 export const modifyPassword = data => { return axios.post('/user/modifyPassword.json', data) }
 
-export const qcodeDecoder = data => { return instance.post('/user/qcodeDecoder', data) }
+export const qcodeDecoder = data => { return instance.post('/utils/qcodeDecoder', data) }
 
 export const getShopMechanismInfoList = data => { return axios.post('/appShop/getShopMechanismInfoList.json', data) }
 

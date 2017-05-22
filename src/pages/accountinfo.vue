@@ -3,7 +3,7 @@
 		<!-- <mt-header fixed :title="this.$route.name"></mt-header> -->
 		<div class="page">
 			<div class="field-group">
-				<mt-field label="姓名" type="text" v-model="form.name" disabled></mt-field>
+				<mt-field label="姓名" type="text" v-model="form.name"></mt-field>
 				<mt-field label="手机号码" type="tel" v-model="form.mobile" disabled></mt-field>
 				<mt-field label="邮箱" placeholder="尚未设置"  v-model="form.email"></mt-field>
 				<mt-field label="QQ" placeholder="尚未设置" type="number" v-model="form.qq"></mt-field>
@@ -13,8 +13,8 @@
 					</mt-cell>
 				</div>
 				<mt-field label="籍贯" placeholder="尚未设置" v-model="form.origin"></mt-field>
-				<div class="border">
-					<mt-field label="生日" v-model="form.birthday" disabled></mt-field>
+				<div class="border" @click="openPicker">
+					<mt-cell title="生日"><span>{{birthday}}</span></mt-cell>
 				</div>
 				<mt-field label="注册时间" v-model="form.createTime" disabled></mt-field>
 			</div>
@@ -26,6 +26,14 @@
 		  :actions="actions"
 		  v-model="sheetVisible">
 		</mt-actionsheet>
+		<mt-datetime-picker
+	    ref="picker"
+	    type="date"
+	    :startDate="new Date('1950-01-01')"
+	    :endDate="new Date()"
+	    v-model="birthday"
+	    @confirm="handleConfirm">
+	  </mt-datetime-picker>
 	</section>
 </template>
 <script>
@@ -36,7 +44,6 @@ export default {
 		return {
 			form: {},
 			sheetVisible: false,
-			pickerVisible: false,
 			actions: [
 				{
 					name: '男',
@@ -49,7 +56,7 @@ export default {
 			]
 		}
 	},
-	methods: {
+	methods: { 
 		showToast (msg) {
 			this.$toast({
 			  message: msg,
@@ -103,6 +110,20 @@ export default {
     	console.log(e)
     	this.form.gender = e.name === '男' ? 1 : 0
     },
+    openPicker() {
+      this.$refs.picker.open()
+    },
+    filled (n){
+			return String(n).replace(/^(\d)$/, '0$1');
+		},
+    handleConfirm (e) {
+    	let date = new Date(e);
+    	let year = date.getFullYear(),
+    			month = this.filled(date.getMonth() + 1),
+    			day = this.filled(date.getDate());
+    	let chooseDay = year+'-'+month+'-'+day;
+    	this.form.birthday = chooseDay
+    },
 		onSubmit () {
 			if (!this.validate.checkForm(this.form)) {
 	      const error = this.validate.errorList[0]
@@ -124,7 +145,6 @@ export default {
 				if(res.data.code === 0) {
 					this.showToast('修改成功')
 					let result = res.data.result
-					// this.$router.push({ path: '/index' })
 				} else {
 					this.showToast(res.data.message)
 				}
@@ -136,6 +156,9 @@ export default {
 	computed: {
 		gender () {
 			return this.form.gender === 1 ? '男' : '女'
+		},
+		birthday () {
+			return this.form.birthday
 		}
 	},
 	mounted () {

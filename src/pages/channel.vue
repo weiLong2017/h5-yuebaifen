@@ -3,10 +3,6 @@
 	<div class="banner"></div>
 	<ul class="channel-list">
 		<li class="channel-item" v-for="channel in channelList">
-		<!-- 	<mt-cell title="标题文字" label="分期金额" to="/" is-link>
-			  <span>icon 是图片</span>
-			  <img slot="icon" src="../assets/img/purse.png" width="24" height="24">
-			</mt-cell> -->
 			<div class="channel-item-icon"></div>
 			<div class="channel-item-detail" @click="selectChannel(channel)">
 				<p v-text="channel.mechanismNickName"></p>
@@ -22,28 +18,6 @@ import { getShopMechanismInfoList } from '../api'
 	export default {
 		data () {
 			return {
-				channels: [
-					{
-						channelName:'有卡分期通道一',
-						minMoney:600,
-						maxMoney:50000
-					},
-					{
-						channelName:'有卡分期通道二',
-						minMoney:1000,
-						maxMoney:60000
-					},
-					{
-						channelName:'有卡分期通道三',
-						minMoney:5000,
-						maxMoney:100000
-					},
-					{
-						channelName:'有卡分期通道四',
-						minMoney:10000,
-						maxMoney:150000
-					}
-				],
 				channelList: []
 			}
 		},

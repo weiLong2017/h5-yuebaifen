@@ -5,7 +5,7 @@
 			<form name="signupForm" class="signup-form">
 				<div class="field-group">
 					<mt-cell title="申请金额">
-					  <span>{{form.amount}}</span>
+					  <span><i>￥</i>{{form.amount}}</span>
 					</mt-cell>
 					<mt-cell title="分期期数">
 					  <span>{{form.parts}}</span>
@@ -164,5 +164,9 @@ export default {
 	.server-link,
 	.signup-button {
 		margin-top: 10px;
+	}
+	i {
+		font-weight: bold;
+		font-style: normal
 	}
 </style>

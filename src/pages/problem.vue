@@ -53,7 +53,7 @@
 					if (i == index) {
 						this.items[i].flag = !this.items[i].flag;
 					} else {
-						// this.items[i].flag = false;
+						this.items[i].flag = false;
 					}
 				}
 			}

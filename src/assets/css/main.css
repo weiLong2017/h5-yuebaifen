@@ -85,6 +85,10 @@ input[type="file"] {
 .mint-cell:last-child .mint-cell-wrapper {
   background: none
 }
+.border .mint-cell-title {
+  flex: none;
+  width: 90px;
+}
 .mint-field .mint-cell-title {
   width: 90px;
 }

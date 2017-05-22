@@ -9,7 +9,7 @@
 						<img :src="form.imgCodeUrl" alt="图片验证码" class="img-code" @click="changeImgCode">
 					</mt-field>
 					<mt-field label="短信验证码" placeholder="短信验证码" type="number" v-model="form.smsCode">
-						<mt-button type="primary" size="small" @click="getSmsCode">获取验证码</mt-button>
+						<mt-button type="primary" size="small" @click.prevent="getSmsCode">获取验证码</mt-button>
 					</mt-field>
 				</div>
 				<div class="field-group">
@@ -230,12 +230,6 @@ export default {
 }
 </script>
 <style scoped>
-	.page {
-		position: absolute;
-		width: 100%;
-		height: 100%;
-		background: #f2f3f4;
-	}
 	.mint-checklist, .server-link {
 		float: left;
 	}

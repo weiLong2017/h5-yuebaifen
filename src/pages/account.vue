@@ -6,8 +6,8 @@
 					<img src="../assets/img/avatar-square.png">
 				</div>
 				<div class="account-info pull-left">
-					<p class="name">嗯</p>
-					<p class="phone">15210647536</p>
+					<p class="name">{{user.name}}</p>
+					<p class="phone">{{user.mobile}}</p>
 				</div>
 			</div>
 		</div>
@@ -37,27 +37,40 @@
 </template>
 
 <script>
+import { getCustomerUserInfo } from '../api'
 export default {
 	data () {
 		return {
-			msg: '我的账户'
+			user: {}
 		}
 	},
 	methods: {
-		handleClose: function(){
-
-		}
+		getUserInfo () {
+			let data = {
+				customerSessionId: sessionStorage.getItem('sessionId')
+			}
+			getCustomerUserInfo(data).then(res => {
+				console.log(res)
+				if(res.data.code === 0) {
+					this.user = res.data.result
+				} else {
+					this.$toast({
+						message: res.data.message
+					})
+				}
+			})
+		},
+	},
+	mounted () {
+		this.getUserInfo()
+		// this.user = JSON.parse(sessionStorage.getItem('user'))
 	}
 }
 </script>
 	
 <style scoped>
 	.page{
-		position: absolute;
-		width:100%;
-		height:100%;
-		overflow: hidden;
-		background: #f9f9f9;
+		background: #f8f8f8;
 	}
 	.page-hd{
 		padding: 15px;
@@ -70,6 +83,7 @@ export default {
 	}
 	.account-info .name {
 		margin-top: 30px;
+		font-size: 16px
 	}
 	.cell-group {
 		margin: 15px 0;

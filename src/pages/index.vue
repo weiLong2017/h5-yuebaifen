@@ -6,7 +6,7 @@
 			</div>
 			<div class="page-bd">
 				<img src="../assets/img/logo.png" class="logo">
-				<p class="desc"><span>{{text}}</span>|<span>零手续费</span>|<span>审批更快</span></p>
+				<p class="desc"><span>额度更高</span>|<span>零手续费</span>|<span>审批更快</span></p>
 			</div>
 			<div class="page-ft">
         <label for="qrcode">
@@ -34,7 +34,6 @@ import { qcodeDecoder, logout } from '../api'
 export default {
 	data () {
 		return {
-			text: '额度更高',
 			isSideOpen: false,
       qrcode: ''
 		}
@@ -51,11 +50,13 @@ export default {
       })
     },
     imgChange (e) {
-      console.log(e)
-      let qrcodeFile = document.getElementById('qrcode')
-      console.log(qrcode.files)
-      // qcodeDecoder(qrcode.files).then(res => {
-      //   console.log(res)
+      // let qrcodeFile = document.getElementById('qrcode').files[0]
+      // if (!qrcodeFile) return false;
+      // let formData = new FormData();
+      // formData.append('qrcode', qrcodeFile)
+      // qcodeDecoder(formData).then(res => {
+      //   let result = res.data.result
+      //   console.log(result)
       // })
       let result = '{"shopUuid": "85F1C4A00A614FCABE69A99628A334A7"}';
       if(result.indexOf('"shopUuid":') === -1) {

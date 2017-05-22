@@ -32,7 +32,8 @@
 </template>
 <style scoped>
 	.page {
-		padding: 15px
+		padding: 15px;
+		background: #fff;
 	}
 	h1 {
 		margin-top: 0;

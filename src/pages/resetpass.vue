@@ -9,7 +9,7 @@
 						<img :src="form.imgCodeUrl" alt="图片验证码" class="img-code" @click="changeImgCode">
 					</mt-field>
 					<mt-field label="短信验证码" placeholder="短信验证码" type="number" v-model="form.smsCode">
-						<mt-button type="primary" size="small" @click="getSmsCode">获取验证码</mt-button>
+						<mt-button type="primary" size="small" @click.prevent="getSmsCode">获取验证码</mt-button>
 					</mt-field>
 					<mt-field label="新密码" placeholder="6-20位数字和字母组合" type="password" v-model="form.newPassword"></mt-field>
 					<mt-field label="确认密码" placeholder="确认密码" type="password" v-model="form.confirmPass"></mt-field>
