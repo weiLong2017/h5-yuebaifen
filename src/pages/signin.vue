@@ -1,7 +1,6 @@
 <template>
 	<section>
-		<!-- <mt-header fixed :title="this.$route.name"></mt-header> -->
-		<div class="page">
+		<div class="page" v-bind:class="{'focus': isFocus}">
 			<div class="page-hd">
 				<router-link to="/signup" class="signup-link">注册</router-link>
 				<p class="logo"><img src="../assets/img/yue_logo.png"></p>
@@ -26,13 +25,15 @@
 import { requestLogin } from '../api'
 import Validate from '../assets/js/WxValidate'
 import Md5 from '../assets/js/md5'
+import utils from '../assets/js/utils'
 export default {
 	data () {
 		return {
 			form: {
 				mobile: '',
 				pass: ''
-		  }
+		  },
+		  isFocus:  false
 		}
 	},
 	methods: {
@@ -41,6 +42,12 @@ export default {
 			  message: msg,
 			  duration: 1000
 			})
+		},
+		focusEvent () {
+			this.isFocus = true
+		},
+		blurEvent () {
+			this.isFocus = false
 		},
 		initValidate() {
 	    this.validate = new Validate({
@@ -79,11 +86,12 @@ export default {
 				console.log(res)
 				if(res.data.code === 0) {
 					self.showToast('登录成功')
+					let name = btoa(escape(btoa(self.form.mobile).split('').reverse().join()))
+          let pass = btoa(escape(btoa(self.form.pass).split('').reverse().join()))
+          utils.setCookie('mobile', name, '7d')
+          utils.setCookie('ukey', pass, '7d')
 					let result = res.data.result
-					console.log(result.customerSessionId)
-					console.log(result.customerUser)
 					sessionStorage.setItem('sessionId', result.customerSessionId)
-					sessionStorage.setItem('user', JSON.stringify(result.customerUser))
 					this.$router.push({ path: '/index' })
 				} else {
 					self.showToast(res.data.message)
@@ -96,16 +104,28 @@ export default {
 	},
 	mounted () {
 		this.initValidate()
+		if (utils.getCookie('mobile') && utils.getCookie('ukey')) {
+      this.form.mobile = atob(unescape(atob(utils.getCookie('mobile'))).split(',').reverse().join(''))
+      this.form.pass = atob(unescape(atob(utils.getCookie('ukey'))).split(',').reverse().join(''))
+    }
+    let input = document.getElementsByClassName('mint-field-core')
+    input[0].addEventListener('focus', this.focusEvent)
+    input[1].addEventListener('focus', this.focusEvent)
+    input[0].addEventListener('blur', this.blurEvent)
+    input[1].addEventListener('blur', this.blurEvent)
 	}
 }
 </script>
 <style scoped>
 	.page {
-		position: absolute;
-		width: 100%;
-		height: 100%;
-		background: url(../assets/img/sign_bg.png) no-repeat;
-		background-size: cover;
+	  position: absolute;
+	  top: 0;
+	  bottom: 0;
+	  width: 100%;
+	  background: #00b4ea url(../assets/img/sign_bg.png) no-repeat;
+	}
+	.page.focus {
+		bottom: -100%;
 	}
 	.signup-link {
 		position: absolute;
@@ -127,13 +147,9 @@ export default {
 		color: #00b4e7;
 		background: #fff
 	}
-	.signin-button:focus {
-		background: #fff
-	}
 	.page-ft {
-		position: absolute;
-		bottom: 20px;
 		width: 100%;
+		margin-top: 50px;
 		color: #ddd;
 		font-size: 14px
 	}

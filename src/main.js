@@ -28,9 +28,7 @@ router.beforeEach((to, from, next) => {
 	}
 })
 axios.interceptors.request.use(function (config) {
-  Indicator.open({
-	  spinnerType: 'fading-circle'
-	})
+  Indicator.open()
 	console.log(config)
   return config
 }, function (error) {

@@ -1,5 +1,5 @@
 <template>
-	<section>
+	<section id="page">
 		<div class="page-main transition" v-bind:class="{'collapsed': isSideOpen}">
 			<div class="page-hd clearfix">
 				<img src="../assets/img/user.png" class="avatar" @click="sideToggle">
@@ -12,7 +12,7 @@
         <label for="qrcode">
           <img src="../assets/img/scan.png" class="icon-scan">
           <span>扫码申请分期</span>
-          <input type="file" id="qrcode" accept="image/jpeg, image/png" @change="imgChange">
+          <input type="file" id="qrcode" accept="image/jpeg, image/png" @change="chooseImage">
         </label>
 			</div>
 		</div>
@@ -34,24 +34,40 @@ import { qcodeDecoder, logout } from '../api'
 export default {
 	data () {
 		return {
-			isSideOpen: false,
-      qrcode: ''
+			isSideOpen: false
 		}
 	},
 	methods: {
-		sideToggle (e) {
-			console.log(e)
+		sideToggle () {
 			this.isSideOpen = !this.isSideOpen
 		},
+    touchStart (e) {
+      this.startX = e.touches[0].clientX
+      this.offsetX = 0
+      this.startTime = Date.now()
+    },
+    touchMove (e) {
+      e.preventDefault()
+      this.offsetX = e.touches[0].clientX - this.startX
+    },
+    touchEnd (e) {
+      if (Date.now() - this.startTime > 100) {
+        if( this.offsetX > 80) {
+          this.isSideOpen = true
+        } else if (this.offsetX < -80) {
+          this.isSideOpen = false
+        }
+      }
+    },
     showToast (msg) {
       this.$toast({
         message: msg,
         duration: 2000
       })
     },
-    imgChange (e) {
-      // let qrcodeFile = document.getElementById('qrcode').files[0]
-      // if (!qrcodeFile) return false;
+    chooseImage (e) {
+      let qrcodeFile = document.getElementById('qrcode').files[0]
+      if (!qrcodeFile) return false;
       // let formData = new FormData();
       // formData.append('qrcode', qrcodeFile)
       // qcodeDecoder(formData).then(res => {
@@ -64,7 +80,6 @@ export default {
         return false
       }
       let shopUuid = JSON.parse(result).shopUuid
-      console.log(shopUuid)
       if (shopUuid) {
         sessionStorage.setItem('shopUuid', shopUuid)
         this.$router.push('/channel')
@@ -79,7 +94,13 @@ export default {
         this.$router.push('/')
       })
     }
-	}
+	},
+  mounted () {
+    let page = document.getElementById('page')
+    page.addEventListener('touchstart', this.touchStart)
+    page.addEventListener('touchmove', this.touchMove)
+    page.addEventListener('touchend', this.touchEnd)
+  }
 }
 </script>
 <style scoped>

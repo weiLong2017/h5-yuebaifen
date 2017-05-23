@@ -3,7 +3,7 @@
 	<section>
 		<p class="title">申请分期</p>
 		<mt-cell title="商品金额">
-		  <input type="text" class="amount" v-model="amount" :placeholder="amountRange">
+		  <input type="number" class="amount" v-model="amount" :placeholder="amountRange">
 		  <img slot="icon" src="../assets/img/ware.png" width="20" height="20">
 		</mt-cell>
 		<div @click="chooseTerm">

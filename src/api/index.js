@@ -8,10 +8,9 @@ const instance = axios.create({
   baseURL: '/decodeUrl',
   timeout: 5000,
   headers: {'Content-Type': 'multipart/form-data'},
-  // headers: {'Content-Type': 'application/x-www-form-urlencoded'},
   transformRequest: [function (data) {
     console.log(data)
-    return data
+    return data;
   }]
 })
 export const requestLogin = data => { return axios.post('/user/loginByMobileAndPassword.json', data) }

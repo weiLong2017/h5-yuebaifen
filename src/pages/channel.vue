@@ -44,7 +44,6 @@ import { getShopMechanismInfoList } from '../api'
     		})
 			},
 			selectChannel (channel) {
-				console.log(channel)
 				sessionStorage.setItem('shopMechanism', JSON.stringify(channel))
 				this.$router.push('/chooseterm')
 			}

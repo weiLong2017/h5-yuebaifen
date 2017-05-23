@@ -1,6 +1,5 @@
 <template>
 	<section>
-		<!-- <mt-header fixed :title="this.$route.name"></mt-header> -->
 		<div class="page">
 			<form name="signupForm" class="signup-form">
 				<div class="field-group">
