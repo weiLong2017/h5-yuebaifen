@@ -81,7 +81,7 @@ export default {
 	    	mobile: this.form.mobile,
 	    	pass: Md5.hex_md5(this.form.pass)
 	    }
-	    console.log(form)
+	    // console.log(form)
 			requestLogin(form).then(res => {
 				console.log(res)
 				if(res.data.code === 0) {

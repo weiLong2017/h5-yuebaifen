@@ -1,6 +1,5 @@
 <template>
 	<section>
-		<!-- <mt-header fixed :title="this.$route.name"></mt-header> -->
 		<div class="page">
 			<form name="signupForm" class="signup-form">
 				<div class="field-group">
@@ -9,7 +8,10 @@
 						<img :src="form.imgCodeUrl" alt="图片验证码" class="img-code" @click="changeImgCode">
 					</mt-field>
 					<mt-field label="短信验证码" placeholder="短信验证码" type="number" v-model="form.smsCode">
-						<mt-button type="primary" size="small" @click.prevent="getSmsCode">获取验证码</mt-button>
+						<mt-button type="primary" size="small" @click.prevent="getSmsCode" :disabled="disabled">
+							<span v-show="disabled">{{count}}s 后重发</span>
+							<span v-show="!disabled">获取验证码</span>
+						</mt-button>
 					</mt-field>
 					<mt-field label="新密码" placeholder="6-20位数字和字母组合" type="password" v-model="form.newPassword"></mt-field>
 					<mt-field label="确认密码" placeholder="确认密码" type="password" v-model="form.confirmPass"></mt-field>
@@ -36,7 +38,9 @@ export default {
 	      imgSessionId: '',
 	      newPassword: '',
 	      confirmPass: ''
-		  }
+		  },
+		  count: 60,
+		  disabled: false
 		}
 	},
 	methods: {
@@ -121,7 +125,6 @@ export default {
 		changeImgCode () {
 			let self = this
 			getRandomImage().then(res => {
-				// console.log(res)
 				if(res.data.code === 0) {
 					let result = res.data.result
 					self.form.imgCodeUrl = 'data:image/png;base64,'+result.imgBase64
@@ -134,6 +137,19 @@ export default {
 	  },
 	  checkTel(value) {
 	    return /^1[34578]\d{9}$/.test(value)
+	  },
+	  countDown () {
+	  	let self = this
+		  var timer;
+		  timer = setInterval(() => {
+		      if (self.count === 0) {
+		        clearInterval(timer)
+		        self.disabled = false
+		        self.count = 60
+		      } else {
+		        self.count--
+		      }
+		    }, 1000)
 	  },
 		getSmsCode () {
 			let self = this
@@ -157,9 +173,10 @@ export default {
         imgSessionId: imgSessionId
       }
 			getMobileSmsCode(data).then(res => {
-				// console.log(res)
 				if(res.data.code === 0) {
 					self.showToast('短信验证码已发送，注意查收')
+					self.disabled = true
+      		self.countDown()
 				} else {
 					self.showToast(res.data.message)
 					self.changeImgCode()

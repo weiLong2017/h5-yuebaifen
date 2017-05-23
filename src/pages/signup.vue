@@ -8,7 +8,10 @@
 						<img :src="form.imgCodeUrl" alt="图片验证码" class="img-code" @click="changeImgCode">
 					</mt-field>
 					<mt-field label="短信验证码" placeholder="短信验证码" type="number" v-model="form.smsCode">
-						<mt-button type="primary" size="small" @click.prevent="getSmsCode">获取验证码</mt-button>
+						<mt-button type="primary" size="small" @click.prevent="getSmsCode" :disabled="disabled">
+							<span v-show="disabled">{{count}}s 后重发</span>
+							<span v-show="!disabled">获取验证码</span>
+						</mt-button>
 					</mt-field>
 				</div>
 				<div class="field-group">
@@ -53,7 +56,9 @@ export default {
 	      pass: '',
 	      pass2: '',
 	      agree: []
-		  }
+		  },
+		  disabled: false,
+		  count: 60
 		}
 	},
 	methods: {
@@ -176,7 +181,6 @@ export default {
 		changeImgCode () {
 			let self = this
 			getRandomImage().then(res => {
-				// console.log(res)
 				if(res.data.code === 0) {
 					let result = res.data.result
 					self.form.imgCodeUrl = 'data:image/png;base64,'+result.imgBase64
@@ -189,6 +193,19 @@ export default {
 	  },
 	  checkTel(value) {
 	    return /^1[34578]\d{9}$/.test(value)
+	  },
+	  countDown () {
+	  	let self = this
+		  var timer;
+		  timer = setInterval(() => {
+		      if (self.count === 0) {
+		        clearInterval(timer)
+		        self.disabled = false
+		        self.count = 60
+		      } else {
+		        self.count--
+		      }
+		    }, 1000)
 	  },
 		getSmsCode () {
 			let self = this
@@ -212,13 +229,16 @@ export default {
         imgSessionId: imgSessionId
       }
 			getMobileSmsCode(data).then(res => {
-				// console.log(res)
 				if(res.data.code === 0) {
 					self.showToast('短信验证码已发送，注意查收')
+					self.disabled = true
+      		self.countDown()
 				} else {
 					self.showToast(res.data.message)
 					self.changeImgCode()
 				}
+			}).then(() => {
+				this.disabled = false
 			})
 		}
 	},
